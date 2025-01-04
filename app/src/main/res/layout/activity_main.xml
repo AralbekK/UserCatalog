@@ -1,6 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp">
 
     <!-- Toolbar "Каталог пользователей" -->
@@ -19,7 +20,6 @@
         android:layout_height="wrap_content"
         android:hint="Введите имя"
         android:inputType="textPersonName"
-        android:layout_below="@id/toolbar"
         android:layout_marginTop="16dp"/>
 
     <!-- Поле для ввода возраста -->
@@ -29,7 +29,6 @@
         android:layout_height="wrap_content"
         android:hint="Введите возраст"
         android:inputType="number"
-        android:layout_below="@id/editTextName"
         android:layout_marginTop="16dp"/>
 
     <!-- Кнопка Сохранить -->
@@ -38,9 +37,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Сохранить"
-        android:layout_below="@id/editTextAge"
         android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true"/>
+        android:layout_gravity="center"/>
 
     <!-- Кнопка Очистить список -->
     <Button
@@ -48,16 +46,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Очистить список"
-        android:layout_below="@id/buttonSave"
         android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true"/>
+        android:layout_gravity="center"/>
 
     <!-- ListView для отображения списка -->
     <ListView
         android:id="@+id/listViewUsers"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/buttonClear"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="16dp"/>
 
-</RelativeLayout>
+</LinearLayout>

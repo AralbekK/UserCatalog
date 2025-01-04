@@ -2,14 +2,16 @@ package com.example.usercatalog
 
 import android.os.Bundle
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import android.view.Menu
 import android.view.MenuItem
 
 class MainActivity : AppCompatActivity() {
 
-    // Список для хранения пользователей
-    private val users = mutableListOf<User>()
+    // Экземпляр ViewModel для пользователей
+    private val userViewModel: UserViewModel by viewModels()
     private lateinit var adapter: ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,10 +29,17 @@ class MainActivity : AppCompatActivity() {
         val listViewUsers: ListView = findViewById(R.id.listViewUsers)
 
         // Создание адаптера для ListView
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, users.map { "${it.name}, ${it.age}" })
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf())
         listViewUsers.adapter = adapter
 
-        // Обработчик нажатия на кнопку "Сохранить"
+        // Условие ДЗ: Подписать адаптер listView на изменения списка с помощью функции observe. Ему передается новый список, снова связывается listView с адаптером, обновляется адаптер с помощью
+        userViewModel.users.observe(this, Observer { newUsers ->
+            adapter.clear()
+            adapter.addAll(newUsers.map { "${it.name}, ${it.age}" })
+            adapter.notifyDataSetChanged()
+        })
+
+        // Обработчик нажатия на кнопку "СОхранить"
         buttonSave.setOnClickListener {
             val name = editTextName.text.toString()
             val age = editTextAge.text.toString().toIntOrNull()
@@ -38,10 +47,8 @@ class MainActivity : AppCompatActivity() {
             if (name.isNotBlank() && age != null) {
                 // Создание и добавление нового пользователя
                 val user = User(name, age)
-                users.add(user)
-                adapter.clear()
-                adapter.addAll(users.map { "${it.name}, ${it.age}" })
-                adapter.notifyDataSetChanged()
+                userViewModel.users.value?.add(user)
+                userViewModel.users.value = userViewModel.users.value
                 editTextName.text.clear()
                 editTextAge.text.clear()
                 Toast.makeText(this, "Пользователь добавлен!", Toast.LENGTH_SHORT).show()
@@ -52,9 +59,8 @@ class MainActivity : AppCompatActivity() {
 
         // Обработчик нажатия на кнопку "Очистить список"
         buttonClear.setOnClickListener {
-            users.clear()
-            adapter.clear()
-            adapter.notifyDataSetChanged()
+            userViewModel.users.value?.clear()
+            userViewModel.users.value = userViewModel.users.value
             Toast.makeText(this, "Список пользователей очищен!", Toast.LENGTH_SHORT).show()
         }
 
@@ -63,10 +69,8 @@ class MainActivity : AppCompatActivity() {
             // Вызов диалогового окна для подтверждения удаления
             val dialog = MyDialog(
                 onConfirm = {
-                    users.removeAt(position)
-                    adapter.clear()
-                    adapter.addAll(users.map { "${it.name}, ${it.age}" })
-                    adapter.notifyDataSetChanged()
+                    userViewModel.users.value?.removeAt(position)
+                    userViewModel.users.value = userViewModel.users.value
                     Toast.makeText(this, "Пользователь удален!", Toast.LENGTH_SHORT).show()
                 },
                 onCancel = {
